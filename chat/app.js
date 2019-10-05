@@ -1,19 +1,12 @@
 'use strict';
 
-const Koa = require('koa');
-const bodyParser = require('koa-bodyparser');
 const dotenv = require('dotenv');
+
+const io = require('./src/io');
+const connectDB = require('./src/connect-db');
 
 dotenv.config();
 
-const server = require('./src/server');
-const connectDB = require('./src/connect-db');
-
 connectDB().catch(console.error);
 
-const app = new Koa();
-
-app.use(bodyParser());
-
-server.on('request', app.callback());
-server.listen(3001, () => console.log('Chat service is up'));
+io.listen(3001);

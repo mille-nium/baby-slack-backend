@@ -1,21 +1,20 @@
 'use strict';
 
-const http = require('http');
-const IO = require('socket.io');
-const socketioJwt = require('socketio-jwt');
+const socketIo = require('socket.io');
+const socketIoJwt = require('socketio-jwt');
 
 const models = require('../models');
 
-const server = http.createServer();
-const io = new IO(server);
+const io = socketIo();
 
-module.exports = server;
+module.exports = io;
 
 const userSockets = new Map();
 
-io.on('connection', socketioJwt.authorize({
+io.on('connection', socketIoJwt.authorize({
   secret: process.env.JWT_SECRET,
 }));
+
 
 io.on('authenticated', socket => {
   const user = socket.decoded_token;
