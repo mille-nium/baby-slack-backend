@@ -1,0 +1,26 @@
+{
+  "name": "baby-slack-backend",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint . --ignore-path .gitignore && prettier -c \"**/*.js\"",
+    "fmt": "prettier --write \"**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mille-nium/baby-slack-backend.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mille-nium/baby-slack-backend/issues"
+  },
+  "homepage": "https://github.com/mille-nium/baby-slack-backend#readme",
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "prettier": "^1.18.2"
+  }
+}
