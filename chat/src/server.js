@@ -9,10 +9,12 @@ const models = require('../models');
 const server = http.createServer();
 const io = new IO(server);
 
+module.exports = server;
+
 const userSockets = new Map();
 
 io.on('connection', socketioJwt.authorize({
-  secret: 'secret',
+  secret: process.env.JWT_SECRET,
 }));
 
 io.on('authenticated', socket => {
@@ -64,6 +66,7 @@ io.on('authenticated', socket => {
     socket.broadcast.to(roomId).emit('user joined', user.username);
   });
 
+  // roomId - ObjectID in room collection
   socket.on('rename public room', async (name, roomId) => {
     await models.RoomModel.updateOne({ id: roomId }, { $set: { name } });
     socket.broadcast.to(roomId).emit('rename', name, user.username);

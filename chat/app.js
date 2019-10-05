@@ -16,4 +16,4 @@ const app = new Koa();
 app.use(bodyParser());
 
 server.on('request', app.callback());
-server.listen(3001);
+server.listen(3001, () => console.log('Chat service is up'));
