@@ -22,6 +22,9 @@ const message = new Schema({
     type: String,
     required: 'Property "body" is required',
   },
+  taggedUsers: {
+    type: [String],
+  }
 });
 
 const MessageModel = model('Message', message);

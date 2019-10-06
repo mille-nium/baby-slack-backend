@@ -9,14 +9,13 @@ const MessageController = require('../controllers/Message');
 
 const io = socketIo();
 
-module.exports = io;
-
 const userSockets = new Map();
 
 io.on(
   'connection',
   socketIoJwt.authorize({
     secret: process.env.JWT_SECRET,
+    timeout: process.env.JWT_TIMEOUT,
   })
 );
 
@@ -32,10 +31,7 @@ io.on('authenticated', socket => {
     const room = await RoomController.create({
       name,
       type: 'private',
-      participants: [
-        { id: user.id, username: user.username },
-        { id: otherUser.id, username: otherUser.username },
-      ],
+      participants: [user, { id: otherUser._id, username: otherUser.username }],
     });
 
     const otherSocket = userSockets.get(otherUserId);
@@ -87,14 +83,28 @@ io.on('authenticated', socket => {
     socket.broadcast.to(roomId).emit('rename', name, user.username);
   });
 
-  socket.on('send message', async (roomId, data, isTag) => {
+  socket.on('send message', async (roomId, data) => {
     socket.broadcast.to(roomId).emit('message', user.username, data);
+
+    const tags = data.match(/@(\w|\.|-){5,22}/g);
+    const room = await RoomController.findById(roomId);
+    const taggedUsers = tags
+      // map '@username' to 'username'
+      .map(tag => tag.slice(1))
+      .filter(tagged =>
+        room.participants.some(({ username }) => tagged === username)
+      );
+
+    const isTagMessage = taggedUsers.length > 0;
 
     await MessageController.create({
       room: roomId,
-      type: isTag ? 'tag' : 'text',
+      type: isTagMessage ? 'tag' : 'text',
       author: user.id,
       body: data,
+      taggedUsers,
     });
   });
 });
+
+module.exports = io;
