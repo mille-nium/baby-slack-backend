@@ -3,10 +3,10 @@
 const dotenv = require('dotenv');
 
 const io = require('./src/io');
-const connectDB = require('./src/connect-db');
+const initDB = require('./src/init-db');
 
 dotenv.config();
 
-connectDB().catch(console.error);
-
-io.listen(3001);
+initDB()
+  .then(() => io.listen(3001))
+  .catch(console.error);

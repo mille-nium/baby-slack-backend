@@ -3,7 +3,9 @@
 const socketIo = require('socket.io');
 const socketIoJwt = require('socketio-jwt');
 
-const models = require('../models');
+const RoomController = require('../controllers/Room');
+const UserController = require('../controllers/User');
+const MessageController = require('../controllers/Message');
 
 const io = socketIo();
 
@@ -11,10 +13,12 @@ module.exports = io;
 
 const userSockets = new Map();
 
-io.on('connection', socketIoJwt.authorize({
-  secret: process.env.JWT_SECRET,
-}));
-
+io.on(
+  'connection',
+  socketIoJwt.authorize({
+    secret: process.env.JWT_SECRET,
+  })
+);
 
 io.on('authenticated', socket => {
   const user = socket.decoded_token;
@@ -22,15 +26,13 @@ io.on('authenticated', socket => {
   userSockets.set(user.id, socket);
 
   socket.on('create private room', async otherUserId => {
-    const otherUser = await models.UserModel.findById(otherUserId);
+    const otherUser = await UserController.findById(otherUserId);
 
-    const room = await models.RoomModel.create({
-      name: user.id + otherUserId,
+    const name = user.id + otherUserId;
+    const room = await RoomController.create({
+      name,
       type: 'private',
-      participants: [
-        { id: user.id, username: user.username },
-        { id: otherUserId, username: otherUser.username },
-      ],
+      participants: [user, otherUser],
     });
 
     const otherSocket = userSockets.get(otherUserId);
@@ -41,22 +43,25 @@ io.on('authenticated', socket => {
   });
 
   socket.on('create public room', async name => {
-    const room = await models.RoomModel.create({
+    const room = await RoomController.create({
       name,
       type: 'public',
       participants: [{ id: user.id, username: user.username }],
     });
-
     socket.join(room.id);
   });
 
-  // roomId - ObjectID in room collection
   socket.on('invite to public room', async (userId, roomId) => {
-    const user = await models.UserModel.findById(userId);
-    const room = await models.RoomModel.findById(roomId);
+    const user = await UserController.findById(userId);
+    const room = await RoomController.findById(roomId);
+
+    if (room.type !== 'public') {
+      socket.emit('error', 'Room is not public');
+      return;
+    }
 
     room.participants.push({ id: userId, username: user.username });
-    room.save();
+    await RoomController.save(room);
 
     const userSocket = userSockets.get(userId);
 
@@ -65,17 +70,24 @@ io.on('authenticated', socket => {
     socket.broadcast.to(roomId).emit('user joined', user.username);
   });
 
-  // roomId - ObjectID in room collection
   socket.on('rename public room', async (name, roomId) => {
-    await models.RoomModel.updateOne({ id: roomId }, { $set: { name } });
+    const room = await RoomController.findById(roomId);
+
+    if (room.type !== 'public') {
+      socket.emit('error', 'Room is not public');
+      return;
+    }
+
+    room.name = name;
+    await RoomController.save(room);
+
     socket.broadcast.to(roomId).emit('rename', name, user.username);
   });
 
-  // roomId - ObjectID in room collection
   socket.on('send message', async (roomId, data, isTag) => {
     socket.broadcast.to(roomId).emit('message', user.username, data);
 
-    await models.MessageModel.create({
+    await MessageController.create({
       room: roomId,
       type: isTag ? 'tag' : 'text',
       author: user.id,

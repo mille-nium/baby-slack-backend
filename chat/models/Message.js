@@ -24,6 +24,6 @@ const message = new Schema({
   },
 });
 
-module.exports = {
-  MessageModel: model('Message', message),
-};
+const MessageModel = model('Message', message);
+
+module.exports = MessageModel;

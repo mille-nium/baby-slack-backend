@@ -1,8 +1,8 @@
 'use strict';
 
-const { UserModel } = require('./User');
-const { RoomModel } = require('./Room');
-const { MessageModel } = require('./Message');
+const UserModel = require('./User');
+const RoomModel = require('./Room');
+const MessageModel = require('./Message');
 
 module.exports = {
   UserModel,
