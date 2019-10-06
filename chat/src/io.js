@@ -32,7 +32,10 @@ io.on('authenticated', socket => {
     const room = await RoomController.create({
       name,
       type: 'private',
-      participants: [user, otherUser],
+      participants: [
+        { id: user.id, username: user.username },
+        { id: otherUser.id, username: otherUser.username },
+      ],
     });
 
     const otherSocket = userSockets.get(otherUserId);
