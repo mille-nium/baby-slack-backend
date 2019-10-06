@@ -1,10 +1,12 @@
 'use strict';
 
-const Koa = require('koa');
-const bodyParser = require('koa-bodyparser');
+const dotenv = require('dotenv');
 
-const app = new Koa();
+const io = require('./src/io');
+const initDB = require('./src/init-db');
 
-app.use(bodyParser());
+dotenv.config();
 
-app.listen(3001);
+initDB()
+  .then(() => io.listen(3001))
+  .catch(console.error);
