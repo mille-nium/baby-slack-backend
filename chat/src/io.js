@@ -86,16 +86,12 @@ io.on('authenticated', socket => {
   });
 
   socket.on('send message', async (roomId, data) => {
-    socket.broadcast.to(roomId).emit('message', user.username, data);
-
-    const tags = data.match(/@(\w|\.|-){5,22}/g);
     const room = await RoomController.findById(roomId);
-    const taggedUsers = tags
-      // map '@username' to 'username'
-      .map(tag => tag.slice(1))
-      .filter(tagged =>
-        room.participants.some(({ username }) => tagged === username)
-      );
+    const tags = data.match(/@(\w|\.|-){5,22}/g);
+    const validTags = tags.filter(tag =>
+      room.participants.some(({ username }) => tag.slice(1) === username)
+    );
+    const taggedUsers = validTags.map(tag => tag.slice(1));
 
     const isTagMessage = taggedUsers.length > 0;
 
@@ -106,6 +102,8 @@ io.on('authenticated', socket => {
       body: data,
       taggedUsers,
     });
+
+    socket.broadcast.to(roomId).emit('message', user.username, data, validTags);
   });
 });
 
