@@ -56,7 +56,7 @@ io.on('authenticated', socket => {
     const room = await RoomController.findById(roomId);
 
     if (room.type !== 'public') {
-      socket.emit('error', 'Room is not public');
+      socket.emit('client error', 'Room is not public');
       return;
     }
 
@@ -74,7 +74,7 @@ io.on('authenticated', socket => {
     const room = await RoomController.findById(roomId);
 
     if (room.type !== 'public') {
-      socket.emit('error', 'Room is not public');
+      socket.emit('client error', 'Room is not public');
       return;
     }
 
