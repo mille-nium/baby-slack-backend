@@ -26,8 +26,9 @@ const authStrategies = () => {
     async (username, password, done) => {
       try {
         const user = await User.findOne({ username });
+        const verified = await user.verifyPassword(password);
 
-        if (!user || !user.verifyPassword(password)) {
+        if (!user || !verified) {
           return done(null, false);
         }
 

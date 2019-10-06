@@ -9,10 +9,9 @@ const router = new Router(routerOpts);
 
 router.post('/sign-up', async ctx => {
   const user = ctx.request.body;
-  const { record, token } = await UserController.signUp(user);
-  await ctx.login(record);
-  const { body } = ctx;
-  body.token = token;
+  const token = await UserController.signUp(user);
+  // eslint-disable-next-line require-atomic-updates
+  ctx.body = { token };
 });
 
 router.post('/sign-in', async (ctx, next) => {
@@ -21,7 +20,7 @@ router.post('/sign-in', async (ctx, next) => {
     { session: false },
     UserController.signIn(ctx)
   );
-  authenticate(ctx, next);
+  await authenticate(ctx, next);
 });
 
 module.exports = router;

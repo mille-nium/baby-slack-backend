@@ -1,7 +1,9 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
+
 const { User } = require('../models/');
+const errors = require('../errors/');
 
 const { JWT_SECRET } = process.env;
 
@@ -12,19 +14,19 @@ const createJWT = record => {
 
 const signUp = async user => {
   const record = await User.create(user);
-  const token = createJWT(user);
-  return { record, token };
+  return createJWT(record);
 };
 
 const signIn = ctx => async (err, user) => {
   if (err || !user) {
-    ctx.throw(401, 'Invalid credentials');
+    const err = new Error(errors.ERR_INVALID_CREDENTIALS);
+    err.status = 401;
+    err.details = ['Invalid username or password'];
+    throw err;
   }
 
-  await ctx.login(user);
   const token = createJWT(user);
-  const { body } = ctx;
-  body.token = token;
+  ctx.body = { token };
 };
 
 module.exports = {
