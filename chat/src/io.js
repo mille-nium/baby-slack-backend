@@ -45,13 +45,13 @@ io.on('authenticated', socket => {
     const room = await RoomController.create({
       name,
       type: 'public',
-      participants: [{ id: user.id, username: user.username }],
+      participants: [user],
     });
     socket.join(room.id);
   });
 
   socket.on('invite to public room', async (userId, roomId) => {
-    const user = await UserController.findById(userId);
+    const otherUser = await UserController.findById(userId);
     const room = await RoomController.findById(roomId);
 
     if (room.type !== 'public') {
@@ -59,14 +59,16 @@ io.on('authenticated', socket => {
       return;
     }
 
-    room.participants.push({ id: userId, username: user.username });
+    room.participants.push({ id: userId, username: otherUser.username });
     await RoomController.save(room);
 
     const userSocket = userSockets.get(userId);
 
     userSocket.join(roomId);
     userSocket.emit('joined public room', room);
-    socket.broadcast.to(roomId).emit('user joined', user.username);
+    socket.broadcast
+      .to(roomId)
+      .emit('user joined', otherUser.username, user.username);
   });
 
   socket.on('rename public room', async (name, roomId) => {
