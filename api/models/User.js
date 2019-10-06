@@ -13,7 +13,7 @@ const userSchema = new Schema({
     required: 'Property "username" is required',
     validate: {
       validator: v => /^[\w_.-]{5,32}$/.test(v),
-      message: props => `${props.value} is not a valid username`,
+      message: props => `"${props.value}" is not a valid username`,
     },
   },
   password: {
