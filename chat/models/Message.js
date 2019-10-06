@@ -12,7 +12,7 @@ const message = new Schema({
   type: {
     type: String,
     values: ['tag', 'text'],
-    default: 'text'
+    default: 'text',
   },
   author: {
     type: Types.ObjectId,

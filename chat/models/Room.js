@@ -11,20 +11,22 @@ const room = new Schema({
   type: {
     type: String,
     enum: ['private', 'public'],
-    default: 'private'
+    default: 'private',
   },
   participants: {
-    type: [{
-      id: {
-        type: Types.ObjectId,
-        ref: 'User',
-        required: 'Property "id" is required',
+    type: [
+      {
+        id: {
+          type: Types.ObjectId,
+          ref: 'User',
+          required: 'Property "id" is required',
+        },
+        username: {
+          type: String,
+          required: 'Property "username" is required',
+        },
       },
-      username: {
-        type: String,
-        required: 'Property "username" is required',
-      }
-    }],
+    ],
   },
 });
 
