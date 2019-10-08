@@ -28,7 +28,7 @@ router.get('/chats/:chatId', async (ctx, next) => {
   await authenticate(ctx, next);
 });
 
-router.get('/uninvited-users/:chatId', async (ctx, next) => {
+router.get('/:chatId/uninvited-users', async (ctx, next) => {
   const { chatId } = ctx.params;
   const authenticate = await passport.authenticate(
     'jwt',
