@@ -5,6 +5,9 @@ const user = {
   ERR_USERNAME_ALREADY_EXISTS: 601,
 };
 
-module.exports = {
+const errors = {
   ...user,
+  ERR_INVALID_JWT: 602,
 };
+
+module.exports = errors;
