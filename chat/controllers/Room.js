@@ -9,12 +9,16 @@ const findById = id => RoomModel.findById(id);
 const save = room => {
   room.participants = room.participants.map(user => ({
     id: user.id || user._id,
+    username: user.username,
   }));
   return room.save();
 };
 
 const create = (name, type, participants) => {
-  participants = participants.map(user => ({ id: user.id || user._id }));
+  participants = participants.map(user => ({
+    id: user.id || user._id,
+    username: user.username,
+  }));
   return RoomModel.create({ name, type, participants });
 };
 
