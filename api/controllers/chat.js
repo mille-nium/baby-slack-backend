@@ -3,6 +3,18 @@
 const { Room } = require('../models/');
 const errors = require('../errors/');
 
+const getChat = (ctx, chatId) => async (err, user) => {
+  if (err || !user) {
+    const err = new Error(errors.ERR_INVALID_JWT);
+    err.status = 401;
+    err.details = ['Invalid JWT'];
+    throw err;
+  }
+
+  const chat = await Room.findOne({ _id: chatId });
+  ctx.body = { chat };
+};
+
 const getChats = ctx => async (err, user) => {
   if (err || !user) {
     const err = new Error(errors.ERR_INVALID_JWT);
@@ -22,5 +34,6 @@ const getChats = ctx => async (err, user) => {
 };
 
 module.exports = {
+  getChat,
   getChats,
 };
