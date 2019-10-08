@@ -12,7 +12,7 @@ const MessageSchema = new Schema(
     },
     type: {
       type: String,
-      values: ['tag', 'text'],
+      enum: ['tag', 'text'],
       default: 'text',
     },
     author: {
