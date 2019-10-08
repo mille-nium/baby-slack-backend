@@ -18,13 +18,18 @@ const create = (name, type, participants) => {
   return RoomModel.create({ name, type, participants });
 };
 
+const deleteRoom = roomId => RoomModel.deleteOne({ _id: roomId });
+
 const userRooms = username =>
-  RoomModel.find({ participants: { $elemMatch: { username } } });
+  RoomModel.find({ participants: { $elemMatch: { username } } }, '_id').then(
+    roomIds => roomIds.map(roomId => roomId.toString())
+  );
 
 module.exports = {
   find,
   findById,
   save,
   create,
+  delete: deleteRoom,
   userRooms,
 };

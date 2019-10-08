@@ -18,7 +18,7 @@ class ChatController {
 
   async joinRooms() {
     const userRooms = await RoomController.userRooms(this.username);
-    userRooms.forEach(room => this.socket.join(room._id.toString()));
+    this.socket.join(userRooms);
   }
 
   async createPrivateRoom(username) {
@@ -75,6 +75,12 @@ class ChatController {
     await RoomController.save(room);
 
     this.socket.broadcast.to(roomId).emit('rename', name, this.username);
+  }
+
+  async deleteRoom(roomId) {
+    await RoomController.delete(roomId);
+    await MessageController.deleteRoomMessages(roomId);
+    this.socket.broadcast.to(roomId).emit('deleted room', roomId);
   }
 
   async sendMessage(roomId, text) {

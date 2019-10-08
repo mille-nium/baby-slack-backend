@@ -28,6 +28,8 @@ const deleteMessage = message => {
   return message.save();
 };
 
+const deleteRoomMessages = roomId => MessageModel.deleteMany({ room: roomId });
+
 const edit = (room, message) => {
   const taggedUsers = getTaggedUsers(message.text, room.participants);
 
@@ -41,5 +43,6 @@ module.exports = {
   findById,
   create,
   delete: deleteMessage,
+  deleteRoomMessages,
   edit,
 };

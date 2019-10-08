@@ -8,6 +8,7 @@ const ChatController = require('../controllers/Chat');
 const io = socketIo();
 
 const userSockets = new Map();
+const roomSockets = new Map();
 
 io.on(
   'connection',
@@ -18,7 +19,7 @@ io.on(
 );
 
 io.on('authenticated', async socket => {
-  const controller = new ChatController(socket, userSockets);
+  const controller = new ChatController(socket, userSockets, roomSockets);
 
   await controller.joinRooms();
 
@@ -36,6 +37,10 @@ io.on('authenticated', async socket => {
 
   socket.on('rename room', async (name, roomId) =>
     controller.renameRoom(name, roomId)
+  );
+
+  socket.on('delete room', async roomId =>
+    controller.deleteRoom(roomId)
   );
 
   socket.on('send message', async (roomId, text) =>
