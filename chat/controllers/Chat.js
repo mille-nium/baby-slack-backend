@@ -60,7 +60,7 @@ class ChatController {
     userSocket.emit('joined public room', room);
     this.socket.broadcast
       .to(roomId)
-      .emit('user joined', username, this.username);
+      .emit('user joined', username, this.username, room);
   }
 
   async renameRoom(name, roomId) {
