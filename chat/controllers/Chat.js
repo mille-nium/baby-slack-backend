@@ -46,6 +46,11 @@ class ChatController {
     const otherUser = await UserController.findOne({ username });
     const room = await RoomController.findById(roomId);
 
+    if (!room) {
+      this.socket.emit('client error', 'No such room');
+      return;
+    }
+
     if (room.type !== 'public') {
       this.socket.emit('client error', 'Room is not public');
       return;
@@ -65,6 +70,11 @@ class ChatController {
 
   async renameRoom(name, roomId) {
     const room = await RoomController.findById(roomId);
+
+    if (!room) {
+      this.socket.emit('client error', 'No such room');
+      return;
+    }
 
     if (room.type !== 'public') {
       this.socket.emit('client error', 'Room is not public');
