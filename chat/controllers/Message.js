@@ -1,26 +1,45 @@
 'use strict';
 
-const {
-  Types: { ObjectId },
-} = require('mongoose');
 const { MessageModel } = require('../models');
 
-const create = (room, authorId, text) => {
-  const tags = text.match(/@(\w|\.|-){5,22}/g);
-  const validTags = tags.filter(tag =>
-    room.participants.some(({ username }) => tag.slice(1) === username)
+const getTaggedUsers = (text, participants) => text
+  .match(/@(\w|\.|-){5,22}/g)
+  .map(tag => tag.slice(1))
+  .filter(username =>
+    participants.some(user => username === user.username)
   );
-  const taggedUsers = validTags.map(tag => tag.slice(1));
+
+const findById = id => MessageModel.findById(id);
+
+const create = (room, authorId, text) => {
+  const taggedUsers = getTaggedUsers(text, room.participants);
 
   return MessageModel.create({
     room: room.id,
     type: taggedUsers.length ? 'tag' : 'text',
-    author: ObjectId(authorId),
+    author: authorId,
     text,
     taggedUsers,
   });
 };
 
+const deleteMessage = message => {
+  message.deleted = true;
+  return message.save();
+};
+
+const edit = (room, message) => {
+  const taggedUsers = getTaggedUsers(message.text, room.participants);
+
+  message.type = taggedUsers.length ? 'tag' : 'text';
+  message.taggedUsers = taggedUsers;
+
+  return message.save();
+};
+
 module.exports = {
+  findById,
   create,
+  delete: deleteMessage,
+  edit,
 };
