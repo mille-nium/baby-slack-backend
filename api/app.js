@@ -11,6 +11,7 @@ const dbInit = require('./utils/db');
 const errorsHandler = require('./middlewares/errors');
 const authStrategies = require('./utils/auth');
 const authRouter = require('./routes/auth');
+const apiRouter = require('./routes/api');
 
 const app = new Koa();
 
@@ -21,6 +22,8 @@ app.use(errorsHandler());
 app.use(passport.initialize());
 app.use(authRouter.routes());
 app.use(authRouter.allowedMethods());
+app.use(apiRouter.routes());
+app.use(apiRouter.allowedMethods());
 
 dbInit()
   .then(() => app.listen(3000))
