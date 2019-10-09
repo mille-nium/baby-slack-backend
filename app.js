@@ -7,11 +7,11 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const dbInit = require('./utils/db');
-const errorsHandler = require('./middlewares/errors');
-const authStrategies = require('./utils/auth');
-const authRouter = require('./routes/auth');
-const apiRouter = require('./routes/api');
+const dbInit = require('./src/utils/db');
+const errorsHandler = require('./src/middlewares/errors');
+const authStrategies = require('./src/utils/auth');
+const authRouter = require('./src/routes/auth');
+const apiRouter = require('./src/routes/api');
 
 const app = new Koa();
 
@@ -26,5 +26,5 @@ app.use(apiRouter.routes());
 app.use(apiRouter.allowedMethods());
 
 dbInit()
-  .then(() => app.listen(3000))
+  .then(() => app.listen(process.env.PORT))
   .catch(console.error);
