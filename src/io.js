@@ -3,7 +3,7 @@
 const socketIo = require('socket.io');
 const socketIoJwt = require('socketio-jwt');
 
-const ChatController = require('../controllers/Chat');
+const ChatController = require('./controllers/Chat');
 
 const io = socketIo();
 

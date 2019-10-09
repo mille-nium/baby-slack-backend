@@ -1,8 +1,8 @@
 'use strict';
 
-const RoomController = require('../controllers/Room');
-const UserController = require('../controllers/User');
-const MessageController = require('../controllers/Message');
+const RoomController = require('./Room');
+const UserController = require('./User');
+const MessageController = require('./Message');
 
 class ChatController {
   constructor(socket, userSockets) {

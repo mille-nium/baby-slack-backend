@@ -1,6 +1,6 @@
 'use strict';
 
-const { MessageModel } = require('../models');
+const { Message } = require('../models');
 
 const getTaggedUsers = (text, participants) => text
   .match(/@(\w|\.|-){5,22}/g)
@@ -9,12 +9,12 @@ const getTaggedUsers = (text, participants) => text
     participants.some(user => username === user.username)
   );
 
-const findById = id => MessageModel.findById(id);
+const findById = id => Message.findById(id);
 
 const create = (room, authorId, text) => {
   const taggedUsers = getTaggedUsers(text, room.participants);
 
-  return MessageModel.create({
+  return Message.create({
     room: room.id,
     type: taggedUsers.length ? 'tag' : 'text',
     author: authorId,
@@ -28,7 +28,7 @@ const deleteMessage = message => {
   return message.save();
 };
 
-const deleteRoomMessages = roomId => MessageModel.deleteMany({ room: roomId });
+const deleteRoomMessages = roomId => Message.deleteMany({ room: roomId });
 
 const edit = (room, message) => {
   const taggedUsers = getTaggedUsers(message.text, room.participants);

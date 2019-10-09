@@ -3,7 +3,7 @@
 const { Schema, model } = require('mongoose');
 const { Types } = Schema;
 
-const RoomSchema = new Schema({
+const room = new Schema({
   name: {
     type: String,
     required: 'Property "name" is required',
@@ -19,15 +19,17 @@ const RoomSchema = new Schema({
         id: {
           type: Types.ObjectId,
           ref: 'User',
+          required: 'Property "id" is required',
         },
         username: {
           type: String,
+          required: 'Property "username" is required',
         },
       },
     ],
   },
 });
 
-const RoomModel = model('Room', RoomSchema);
+const Room = model('Room', room);
 
-module.exports = RoomModel;
+module.exports = Room;

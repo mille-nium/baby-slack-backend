@@ -3,7 +3,7 @@
 const { Schema, model } = require('mongoose');
 const { Types } = Schema;
 
-const MessageSchema = new Schema(
+const message = new Schema(
   {
     room: {
       type: Types.ObjectId,
@@ -34,6 +34,6 @@ const MessageSchema = new Schema(
   { timestamps: true }
 );
 
-const MessageModel = model('Message', MessageSchema);
+const Message = model('Message', message);
 
-module.exports = MessageModel;
+module.exports = Message;

@@ -8,8 +8,12 @@ const options = {
   useCreateIndex: true,
 };
 
-module.exports = () =>
+const initDB = () =>
   connect(
     process.env.DBURL,
     options
   );
+
+module.exports = {
+  initDB,
+};

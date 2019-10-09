@@ -1,10 +1,10 @@
 'use strict';
 
-const { RoomModel } = require('../models');
+const { Room } = require('../models');
 
-const find = query => RoomModel.find(query);
+const find = query => Room.find(query);
 
-const findById = id => RoomModel.findById(id);
+const findById = id => Room.findById(id);
 
 const save = room => {
   room.participants = room.participants.map(user => ({
@@ -19,13 +19,13 @@ const create = (name, type, participants) => {
     id: user.id || user._id,
     username: user.username,
   }));
-  return RoomModel.create({ name, type, participants });
+  return Room.create({ name, type, participants });
 };
 
-const deleteRoom = roomId => RoomModel.deleteOne({ _id: roomId });
+const deleteRoom = roomId => Room.deleteOne({ _id: roomId });
 
 const userRooms = username =>
-  RoomModel.find({ participants: { $elemMatch: { username } } }, '_id').then(
+  Room.find({ participants: { $elemMatch: { username } } }, '_id').then(
     roomIds => roomIds.map(roomId => roomId.toString())
   );
 
