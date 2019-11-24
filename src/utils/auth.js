@@ -2,25 +2,9 @@
 
 const passport = require('koa-passport');
 const LocalStrategy = require('passport-local');
-const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
-
 const { User } = require('../models');
 
 const authStrategies = () => {
-  const jwtOptions = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET,
-  };
-
-  const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
-    try {
-      const user = await User.findById(payload.id);
-      user ? done(null, user) : done(null, false);
-    } catch (err) {
-      done(err);
-    }
-  });
-
   const localStrategy = new LocalStrategy(
     { session: false },
     async (username, password, done) => {
@@ -39,7 +23,6 @@ const authStrategies = () => {
     }
   );
 
-  passport.use(jwtStrategy);
   passport.use(localStrategy);
 };
 

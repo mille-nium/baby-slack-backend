@@ -2,7 +2,7 @@
 
 const jwt = require('jsonwebtoken');
 
-const { User, Room } = require('../models/');
+const { User } = require('../models/');
 const errors = require('../errors/');
 
 const { JWT_SECRET } = process.env;
@@ -29,26 +29,10 @@ const signIn = ctx => async (err, user) => {
   ctx.body = { token };
 };
 
-const getUninvitedUsers = (ctx, chatId) => async (err, user) => {
-  if (err || !user) {
-    const err = new Error(errors.ERR_INVALID_JWT);
-    err.status = 401;
-    err.details = ['Invalid JWT'];
-    throw err;
-  }
-
-  const participants = await Room.findOne({ _id: chatId }).map(room =>
-    room.participants.map(user => user.id)
-  );
-  const uninvitedUsers = await User.find(
-    { _id: { $nin: participants } },
-    '_id username'
-  );
-  ctx.body = { users: uninvitedUsers };
-};
+const getUserById = id => User.findById(id);
 
 module.exports = {
   signUp,
   signIn,
-  getUninvitedUsers,
+  getUserById,
 };

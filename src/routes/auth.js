@@ -23,4 +23,11 @@ router.post('/sign-in', async (ctx, next) => {
   await authenticate(ctx, next);
 });
 
+router.get('/:id', async ctx => {
+  const { id } = ctx.params;
+  const user = await UserController.getUserById(id);
+  // eslint-disable-next-line require-atomic-updates
+  ctx.body = { user };
+});
+
 module.exports = router;
